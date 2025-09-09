@@ -1,0 +1,21 @@
+services:
+    inventory-system-app:
+        container_name: inventory-system-app
+        build:
+            context: ..
+            dockerfile: Dockerfile
+        networks:
+            - inventory-system-network
+        restart: unless-stopped
+        depends_on:
+            - postgres
+        ports:
+            - 8000:8000
+        volumes:
+            - ../:/app
+        command: >
+            sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+networks:
+    inventory-system-network:
+        driver: bridge
