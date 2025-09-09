@@ -3,7 +3,7 @@ DC_EXEC = docker exec
 ENV_FILE = --env-file .env
 EXEC = docker exec -it
 COMPOSE_FILES = -f docker/app.yaml -f docker/storage.yaml
-APP_CONTAINER = required-viewing-app
+APP_CONTAINER = inventory-system-app
 MANAGE = python manage.py
 
 .PHONY: build start stop restart status
