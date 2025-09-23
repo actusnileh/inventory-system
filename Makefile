@@ -2,7 +2,7 @@ DC = docker-compose
 DC_EXEC = docker exec
 ENV_FILE = --env-file .env
 EXEC = docker exec -it
-COMPOSE_FILES = -f docker/app.yaml -f docker/storage.yaml
+COMPOSE_FILES = -f docker/app.yaml -f docker/storages.yaml
 APP_CONTAINER = inventory-system-app
 MANAGE = python manage.py
 
