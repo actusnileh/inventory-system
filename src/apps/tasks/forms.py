@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
-from .models import Project, Task, TaskTag
+from .models import Project, Task
 
 User = get_user_model()
 
@@ -47,12 +48,8 @@ class TaskForm(forms.ModelForm):
             "assignee",
             "watchers",
             "assets",
-            "tags",
             "start_date",
             "due_date",
-            "estimated_hours",
-            "actual_hours",
-            "progress",
         )
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4, "class": "form-control"}),
@@ -63,15 +60,16 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
-        self.fields["project"].queryset = Project.objects.filter(is_active=True).order_by("name")
+        project_qs = Project.objects.filter(is_active=True).order_by("name")
         self.fields["assignee"].queryset = User.objects.order_by("username")
         self.fields["watchers"].queryset = User.objects.order_by("username")
-        self.fields["tags"].queryset = TaskTag.objects.order_by("name")
         self.fields["watchers"].required = False
         self.fields["assets"].required = False
-        self.fields["tags"].required = False
         if user and not user.is_admin_role:
-            self.fields["project"].queryset = self.fields["project"].queryset.filter(members=user)
+            project_qs = project_qs.filter(Q(members=user) | Q(owner=user))
+        if self.instance.pk and self.instance.project_id:
+            project_qs = (project_qs | Project.objects.filter(pk=self.instance.project_id)).distinct()
+        self.fields["project"].queryset = project_qs
         for name, field in self.fields.items():
             if isinstance(field.widget, forms.SelectMultiple):
                 field.widget.attrs.setdefault("class", "form-select")

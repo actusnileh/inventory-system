@@ -70,10 +70,7 @@
                     <p class="text-secondary mb-0">Структура компании с закреплёнными сотрудниками. Используйте поиск, чтобы быстро найти команду.</p>
                 </div>
                 <div class="col-lg-4">
-                    <div class="form-search">
-                        <i class="bi bi-search search-icon"></i>
-                        <input type="search" class="form-control form-control-lg" id="department-filter" placeholder="Поиск отдела..." autocomplete="off">
-                    </div>
+                    <input type="search" class="form-control form-control-lg" id="department-filter" placeholder="Поиск отдела..." autocomplete="off">
                 </div>
             </div>
             <div class="row g-4">
@@ -85,11 +82,11 @@
                                 <span class="badge bg-light text-dark">{{ department.user_count }}</span>
                             </div>
                             <p class="text-secondary small mb-3">{{ department.description|default:"Описание не задано" }}</p>
-                            <div class="d-flex flex-column gap-2">
-                                {% for member in department.users.all|slice:":4" %}
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="avatar rounded-circle" style="width:36px;height:36px;background:rgba(79,70,229,0.15);display:flex;align-items:center;justify-content:center;color:#3730a3;">
-                                            <i class="bi bi-person-fill"></i>
+                    <div class="d-flex flex-column gap-2">
+                        {% for member in department.users.all|slice:":4" %}
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="avatar rounded-circle" style="width:36px;height:36px;background:rgba(79,70,229,0.15);display:flex;align-items:center;justify-content:center;color:#3730a3;">
+                                    <i class="bi bi-person-fill"></i>
                                         </span>
                                         <div class="flex-grow-1">
                                             <strong class="d-block">{{ member.get_display_name }}</strong>
@@ -119,10 +116,7 @@
                     <p class="text-secondary mb-0">Живой список последних пользователей и их активность.</p>
                 </div>
                 <div class="toolbar-actions">
-                    <div class="form-search">
-                        <i class="bi bi-search search-icon"></i>
-                        <input type="search" class="form-control form-control-lg" id="team-global-search" placeholder="Поиск пользователей..." autocomplete="off">
-                    </div>
+                    <input type="search" class="form-control form-control-lg" id="team-global-search" placeholder="Поиск пользователей..." autocomplete="off">
                     <div class="d-flex gap-1">
                         <button type="button" class="filter-chip active" data-role-filter="all">Все</button>
                         <button type="button" class="filter-chip" data-role-filter="admin">Админы</button>

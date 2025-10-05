@@ -25,7 +25,7 @@ status:
 logs:
 	${DC} ${COMPOSE_FILES} ${ENV_FILE} logs -f
 
-.PHONY: makemigrations migrate createsuperuser
+.PHONY: makemigrations migrate createsuperuser seed
 makemigrations:
 	${DC_EXEC} ${APP_CONTAINER} ${MANAGE} makemigrations
 
@@ -34,3 +34,6 @@ migrate:
 
 createsuperuser:
 	${DC_EXEC} -it ${APP_CONTAINER} ${MANAGE} createsuperuser
+
+seed:
+	${DC_EXEC} ${APP_CONTAINER} ${MANAGE} seed_demo

@@ -12,7 +12,6 @@ from .models import (
     TaskChecklistItem,
     TaskComment,
     TaskDependency,
-    TaskTag,
 )
 
 
@@ -56,20 +55,18 @@ class TaskAdmin(admin.ModelAdmin):
         "priority",
         "assignee",
         "due_date",
-        "progress",
         "is_archived",
     )
     list_filter = (
         "status",
         "priority",
         "project",
-        "tags",
         "is_archived",
         "due_date",
     )
     search_fields = ("title", "description", "project__name")
     autocomplete_fields = ("project", "created_by", "assignee")
-    filter_horizontal = ("watchers", "assets", "tags")
+    filter_horizontal = ("watchers", "assets")
     inlines = (TaskAssignmentInline, TaskChecklistInline, TaskAttachmentInline, TaskCommentInline)
     readonly_fields = ("created_at", "updated_at", "completed_at")
     date_hierarchy = "due_date"
@@ -80,13 +77,6 @@ class TaskAdmin(admin.ModelAdmin):
         (_("Сроки"), {"fields": ("start_date", "due_date", "completed_at")}),
         (_("Команда"), {"fields": ("created_by", "assignee", "watchers")}),
         (_("Инвентарь"), {"fields": ("assets",)}),
-        (_("Оценка"), {
-            "fields": (
-                "estimated_hours",
-                "actual_hours",
-                "progress",
-            )
-        }),
         (_("Системные поля"), {"fields": ("created_at", "updated_at")}),
     )
 
@@ -99,12 +89,6 @@ class ProjectAdmin(admin.ModelAdmin):
     prepopulated_fields = {"code": ("name",)}
     filter_horizontal = ("members",)
     autocomplete_fields = ("owner",)
-
-
-@admin.register(TaskTag)
-class TaskTagAdmin(admin.ModelAdmin):
-    list_display = ("name", "color")
-    search_fields = ("name",)
 
 
 @admin.register(TaskComment)

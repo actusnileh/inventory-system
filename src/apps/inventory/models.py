@@ -83,19 +83,6 @@ class Vendor(models.Model):
         return self.name
 
 
-class AssetTag(models.Model):
-    name = models.CharField("Тег", max_length=60, unique=True)
-    color = models.CharField("Цвет", max_length=12, default="#0ea5e9")
-
-    class Meta:
-        verbose_name = "Тег оборудования"
-        verbose_name_plural = "Теги оборудования"
-        ordering = ("name",)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Asset(models.Model):
     class Status(models.TextChoices):
         AVAILABLE = "available", "В наличии"
@@ -147,7 +134,6 @@ class Asset(models.Model):
         null=True,
         blank=True,
     )
-    tags = models.ManyToManyField(AssetTag, verbose_name="Теги", blank=True, related_name="assets")
     vendor = models.ForeignKey(
         Vendor,
         verbose_name="Поставщик",

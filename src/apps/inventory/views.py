@@ -22,11 +22,7 @@ class AssetOverviewView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        assets = (
-            Asset.objects.select_related("category", "location", "assigned_to", "custodian")
-            .prefetch_related("tags")
-            .order_by("name")
-        )
+        assets = Asset.objects.select_related("category", "location", "assigned_to", "custodian").order_by("name")
         status_breakdown = assets.values("status").annotate(total=Count("id")).order_by("-total")
         category_breakdown = (
             AssetCategory.objects.annotate(asset_total=Count("assets")).order_by("-asset_total")

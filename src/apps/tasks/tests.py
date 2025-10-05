@@ -21,7 +21,6 @@ class TaskBoardViewTests(TestCase):
             assignee=self.user,
             status=Task.Status.IN_PROGRESS,
             priority=Task.Priority.HIGH,
-            progress=60,
         )
         self.todo_task = Task.objects.create(
             project=self.project,
@@ -62,11 +61,8 @@ class TaskBoardViewTests(TestCase):
             "assignee": self.user.pk,
             "watchers": [self.user.pk],
             "assets": [],
-            "tags": [],
             "start_date": "",
             "due_date": "",
-            "estimated_hours": "",
-            "progress": 0,
         }
         response = self.client.post(reverse("tasks:task_create"), payload)
         self.assertRedirects(response, reverse("tasks:board"))

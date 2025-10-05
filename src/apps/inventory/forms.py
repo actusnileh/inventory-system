@@ -19,7 +19,6 @@ class AssetForm(forms.ModelForm):
             "location",
             "custodian",
             "assigned_to",
-            "tags",
             "vendor",
             "purchase_date",
             "purchase_price",
@@ -43,16 +42,12 @@ class AssetForm(forms.ModelForm):
         self.fields["custodian"].queryset = User.objects.order_by("username")
         self.fields["assigned_to"].queryset = User.objects.order_by("username")
         for name, field in self.fields.items():
-            if name in {"tags"}:
-                field.widget.attrs.update({"class": "form-select", "multiple": "multiple"})
-                continue
             if isinstance(field.widget, forms.Select):
                 field.widget.attrs.setdefault("class", "form-select form-select-lg")
             elif isinstance(field.widget, forms.Textarea):
                 continue
             else:
                 field.widget.attrs.setdefault("class", "form-control form-control-lg")
-        self.fields["tags"].widget.attrs.setdefault("class", "form-select")
 
 
 class LocationForm(forms.ModelForm):

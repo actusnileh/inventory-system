@@ -39,9 +39,9 @@
                     <div class="d-flex flex-column gap-2">
                         <a href="{% url 'inventory:asset_create' %}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Новое оборудование</a>
                         <div class="d-flex gap-2">
-                            <a href="{% url 'inventory:vendor_create' %}" class="btn btn-outline-light flex-grow-1">Поставщик</a>
-                            <a href="{% url 'inventory:category_create' %}" class="btn btn-outline-light flex-grow-1">Категория</a>
-                            <a href="{% url 'inventory:location_create' %}" class="btn btn-outline-light flex-grow-1">Локация</a>
+                        <a href="{% url 'inventory:vendor_create' %}" class="btn btn-outline-dark flex-grow-1">Поставщик</a>
+                        <a href="{% url 'inventory:category_create' %}" class="btn btn-outline-dark flex-grow-1">Категория</a>
+                        <a href="{% url 'inventory:location_create' %}" class="btn btn-outline-dark flex-grow-1">Локация</a>
                         </div>
                     </div>
                 {% endif %}

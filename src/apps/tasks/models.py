@@ -41,19 +41,6 @@ class Project(models.Model):
         super().save(*args, **kwargs)
 
 
-class TaskTag(models.Model):
-    name = models.CharField("Тег", max_length=60, unique=True)
-    color = models.CharField("Цвет", max_length=12, default="#6366f1")
-
-    class Meta:
-        verbose_name = "Тег задачи"
-        verbose_name_plural = "Теги задач"
-        ordering = ("name",)
-
-    def __str__(self) -> str:
-        return self.name
-
-
 class Task(models.Model):
     class Status(models.TextChoices):
         BACKLOG = "backlog", "Бэклог"
@@ -99,13 +86,9 @@ class Task(models.Model):
     )
     watchers = models.ManyToManyField(User, verbose_name="Наблюдатели", related_name="watched_tasks", blank=True)
     assets = models.ManyToManyField("inventory.Asset", verbose_name="Оборудование", related_name="tasks", blank=True)
-    tags = models.ManyToManyField(TaskTag, verbose_name="Теги", blank=True, related_name="tasks")
     start_date = models.DateField("Старт", null=True, blank=True)
     due_date = models.DateField("Дедлайн", null=True, blank=True)
     completed_at = models.DateTimeField("Завершено", null=True, blank=True)
-    estimated_hours = models.DecimalField("Оценка, ч", max_digits=6, decimal_places=2, null=True, blank=True)
-    actual_hours = models.DecimalField("Затраты, ч", max_digits=6, decimal_places=2, null=True, blank=True)
-    progress = models.PositiveSmallIntegerField("Прогресс, %", default=0)
     is_archived = models.BooleanField("Архив", default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -130,17 +113,6 @@ class Task(models.Model):
             action=TaskActivity.Action.STATUS,
             payload={"status": status},
         )
-
-    def mark_progress(self, value: int, *, user: User | None = None) -> None:
-        self.progress = max(0, min(100, value))
-        self.save(update_fields=["progress"])
-        TaskActivity.objects.create(
-            task=self,
-            author=user,
-            action=TaskActivity.Action.PROGRESS,
-            payload={"progress": self.progress},
-        )
-
 
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, verbose_name="Задача", related_name="assignments", on_delete=models.CASCADE)
@@ -252,7 +224,6 @@ class TaskDependency(models.Model):
 class TaskActivity(models.Model):
     class Action(models.TextChoices):
         STATUS = "status", "Статус"
-        PROGRESS = "progress", "Прогресс"
         COMMENT = "comment", "Комментарий"
         CHECKLIST = "checklist", "Чек-лист"
         ATTACHMENT = "attachment", "Файл"

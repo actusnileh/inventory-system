@@ -19,7 +19,7 @@ class TaskBoardView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         tasks = (
             Task.objects.select_related("project", "assignee", "created_by")
-            .prefetch_related("tags", "watchers", "assets")
+            .prefetch_related("watchers", "assets")
             .order_by("priority", "due_date")
         )
 

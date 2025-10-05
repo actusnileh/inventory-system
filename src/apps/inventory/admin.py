@@ -8,7 +8,6 @@ from .models import (
     AssetAttachment,
     AssetCategory,
     AssetLogEntry,
-    AssetTag,
     Location,
     MaintenanceRecord,
     Vendor,
@@ -65,10 +64,9 @@ class AssetAdmin(admin.ModelAdmin):
         "category",
         "location",
         "vendor",
-        "tags",
     )
     search_fields = ("name", "inventory_code", "serial_number")
-    autocomplete_fields = ("category", "location", "custodian", "assigned_to", "vendor", "tags")
+    autocomplete_fields = ("category", "location", "custodian", "assigned_to", "vendor")
     inlines = (AssetAttachmentInline, MaintenanceInline, AssetLogInline)
     readonly_fields = ("created_at", "updated_at")
     actions = ("mark_available", "mark_in_use", "mark_maintenance")
@@ -84,7 +82,6 @@ class AssetAdmin(admin.ModelAdmin):
                 "serial_number",
                 "status",
                 "condition",
-                "tags",
             )
         }),
         ("Расположение", {
@@ -152,12 +149,6 @@ class LocationAdmin(admin.ModelAdmin):
 class VendorAdmin(admin.ModelAdmin):
     list_display = ("name", "email", "phone", "website")
     search_fields = ("name", "email", "phone")
-
-
-@admin.register(AssetTag)
-class AssetTagAdmin(admin.ModelAdmin):
-    list_display = ("name", "color")
-    search_fields = ("name",)
 
 
 @admin.register(MaintenanceRecord)
