@@ -4,100 +4,37 @@
 
 {% block content %}
 <div class="py-5">
-    <section class="hero-section position-relative mb-5" data-aos="fade-up">
-        <div class="surface-panel p-4 p-lg-5 position-relative overflow-hidden">
-            <div class="floating position-absolute top-0 start-50 translate-middle opacity-25" style="width:180px;height:180px;background:radial-gradient(circle, rgba(79,70,229,0.6) 0%, rgba(79,70,229,0));"></div>
-            <div class="floating delay-1 position-absolute bottom-0 end-0 me-n5 mb-n5 opacity-10" style="width:220px;height:220px;background:radial-gradient(circle, rgba(6,182,212,0.6) 0%, rgba(6,182,212,0));"></div>
-            <div class="row g-5 align-items-center">
+    <section class="mb-5" data-aos="fade-up">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
                 <div class="col-lg-7">
-                    <div class="badge-soft mb-3">
-                        <span class="pulse-dot"></span>
-                        Всё под контролем
-                    </div>
-                    <h1 class="display-5 fw-bold text-dark mb-4">
-                        Управляйте инвентарём и задачами в одном живом рабочем пространстве
-                    </h1>
-                    <p class="fs-5 text-secondary mb-4">
-                        Создавайте задачи, отслеживайте перемещения оборудования, контролируйте дедлайны и статус исполнения.
-                        Гибкие виджеты, умные уведомления и визуальная аналитика экономят время команды каждый день.
-                    </p>
+                    <h1 class="display-5 fw-bold text-dark mb-3">Система управления инвентарём и задачами</h1>
+                    <p class="text-secondary mb-4">Единый интерфейс для регистрации оборудования, планирования задач и контроля исполнения. Подходит для компаний любого масштаба: от небольших команд до распределённых подразделений.</p>
                     <div class="d-flex flex-column flex-sm-row gap-3">
                         {% if user.is_authenticated %}
-                        <a href="{% url 'tasks:board' %}" class="btn btn-primary btn-lg px-4">
-                            <i class="bi bi-speedometer2 me-2"></i>Перейти в дашборд
-                        </a>
-                        <a href="{% url 'tasks:board' %}" class="btn btn-outline-dark btn-lg px-4">
-                            <i class="bi bi-lightning-charge me-2"></i>Открыть задачи
-                        </a>
+                        <a href="{% url 'tasks:board' %}" class="btn btn-primary btn-lg px-4">Открыть рабочее пространство</a>
+                        <a href="{% url 'inventory:asset_list' %}" class="btn btn-outline-dark btn-lg px-4">Каталог оборудования</a>
                         {% else %}
-                        <a href="{% url 'tasks:board' %}" class="btn btn-primary btn-lg px-4">
-                            <i class="bi bi-play-circle me-2"></i>Посмотреть доску
-                        </a>
-                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark btn-lg px-4">
-                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти в систему
-                        </a>
+                        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-4">Создать рабочее пространство</a>
+                        <a href="{% url 'accounts:login' %}" class="btn btn-outline-dark btn-lg px-4">Войти</a>
                         {% endif %}
                     </div>
-                    <div class="d-flex flex-wrap gap-4 mt-5">
-                        <div>
-                            <div class="h2 fw-bold mb-0 text-dark">240+</div>
-                            <small class="text-secondary">Единиц оборудования под контролем</small>
-                        </div>
-                        <div>
-                            <div class="h2 fw-bold mb-0 text-dark">98%</div>
-                            <small class="text-secondary">Задач закрыты в срок</small>
-                        </div>
-                        <div>
-                            <div class="h2 fw-bold mb-0 text-dark">24/7</div>
-                            <small class="text-secondary">Доступ с любого устройства</small>
-                        </div>
-                    </div>
                 </div>
-                <div class="col-lg-5 position-relative" data-aos="zoom-in" data-aos-delay="150">
+                <div class="col-lg-5">
                     <div class="glassy-card p-4">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h5 class="mb-0">Живой статус команды</h5>
-                            <span class="badge bg-success bg-opacity-25 text-success">Online</span>
-                        </div>
-                        <div class="d-flex flex-column gap-3">
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-3">
-                                    <span class="avatar rounded-circle" style="width:46px;height:46px;background:rgba(79,70,229,0.25);display:flex;align-items:center;justify-content:center;"><i class="bi bi-person-check text-light"></i></span>
-                                    <div>
-                                        <strong>Выдача ноутбуков</strong>
-                                        <div class="small text-light text-opacity-75">Собрано: 12/15</div>
-                                    </div>
-                                </div>
-                                <span class="badge bg-primary bg-opacity-25 text-primary">В работе</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-3">
-                                    <span class="avatar rounded-circle" style="width:46px;height:46px;background:rgba(34,197,94,0.2);display:flex;align-items:center;justify-content:center;"><i class="bi bi-qr-code text-light"></i></span>
-                                    <div>
-                                        <strong>Инвентаризация склада</strong>
-                                        <div class="small text-light text-opacity-75">Обновлено на 86%</div>
-                                    </div>
-                                </div>
-                                <span class="badge bg-success bg-opacity-25 text-success">На контроле</span>
-                            </div>
-                            <div class="d-flex align-items-center justify-content-between">
-                                <div class="d-flex align-items-center gap-3">
-                                    <span class="avatar rounded-circle" style="width:46px;height:46px;background:rgba(250,204,21,0.2);display:flex;align-items:center;justify-content:center;"><i class="bi bi-clipboard-check text-light"></i></span>
-                                    <div>
-                                        <strong>Согласование закупок</strong>
-                                        <div class="small text-light text-opacity-75">Новых запросов: 4</div>
-                                    </div>
-                                </div>
-                                <span class="badge bg-warning bg-opacity-25 text-warning">Ожидает</span>
-                            </div>
-                        </div>
-                        <hr class="border-light border-opacity-25 my-4">
-                        <div class="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div class="small text-uppercase text-light text-opacity-70">Активность за сегодня</div>
-                                <div class="h5 mb-0">+27 событий</div>
-                            </div>
-                            <button class="btn btn-outline-light btn-sm px-3">Сводка</button>
+                        <h5 class="mb-3">Текущее состояние</h5>
+                        <dl class="row mb-0 text-secondary">
+                            <dt class="col-7"><i class="bi bi-kanban me-2"></i>Активных задач</dt>
+                            <dd class="col-5 fw-semibold text-dark">{{ homepage.task_count|default:0 }}</dd>
+                            <dt class="col-7"><i class="bi bi-laptop me-2"></i>Оборудование под контролем</dt>
+                            <dd class="col-5 fw-semibold text-dark">{{ homepage.asset_count|default:0 }}</dd>
+                            <dt class="col-7"><i class="bi bi-gear-wide-connected me-2"></i>Запланировано обслуживаний</dt>
+                            <dd class="col-5 fw-semibold text-dark">{{ homepage.maintenance_planned|default:0 }}</dd>
+                        </dl>
+                        <hr>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'accounts:team_directory' %}" class="btn btn-outline-dark flex-fill">Команда</a>
+                            <a href="{% url 'tasks:board' %}" class="btn btn-primary flex-fill">Перейти к задачам</a>
                         </div>
                     </div>
                 </div>
@@ -105,42 +42,26 @@
         </div>
     </section>
 
-    <section class="py-4 py-lg-5">
-        <div class="row g-4 g-xl-5 align-items-stretch">
-            <div class="col-md-6 col-xl-3" data-aos="fade-up">
-                <div class="feature-card h-100 p-4">
-                    <div class="feature-icon mb-3 text-primary">
-                        <span><i class="bi bi-inboxes"></i></span>
+    <section class="mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card h-100 p-4">
+                        <h5 class="fw-semibold text-dark">Инвентарь без хаоса</h5>
+                        <p class="text-secondary">Категории, локации, поставщики и обслуживание в одном интерфейсе. Быстрый поиск иконками, фильтры по статусу и истории.</p>
                     </div>
-                    <h5 class="fw-semibold text-dark">Каталог оборудования</h5>
-                    <p class="text-secondary">Отсканируйте любой QR‑код и мгновенно увидите статус выдачи, историю и назначение.</p>
                 </div>
-            </div>
-            <div class="col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-card h-100 p-4">
-                    <div class="feature-icon mb-3 text-success">
-                        <span><i class="bi bi-kanban"></i></span>
+                <div class="col-md-4">
+                    <div class="feature-card h-100 p-4">
+                        <h5 class="fw-semibold text-dark">Рабочие процессы</h5>
+                        <p class="text-secondary">Создание и управление задачами, контроль сроков, автоматические уведомления и чек-листы для команды.</p>
                     </div>
-                    <h5 class="fw-semibold text-dark">Гибкий канбан</h5>
-                    <p class="text-secondary">Изменяйте статусы задач drag-and-drop и контролируйте дедлайны без перегрузки команды.</p>
                 </div>
-            </div>
-            <div class="col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-card h-100 p-4">
-                    <div class="feature-icon mb-3 text-info">
-                        <span><i class="bi bi-graph-up"></i></span>
+                <div class="col-md-4">
+                    <div class="feature-card h-100 p-4">
+                        <h5 class="fw-semibold text-dark">Прозрачная аналитика</h5>
+                        <p class="text-secondary">Ключевые метрики по активным задачам и оборудованию доступны сразу после входа.</p>
                     </div>
-                    <h5 class="fw-semibold text-dark">Интеллектуальная аналитика</h5>
-                    <p class="text-secondary">Контролируйте уровень задействованных ресурсов, просрочки и вовлечённость команды.</p>
-                </div>
-            </div>
-            <div class="col-md-6 col-xl-3" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-card h-100 p-4">
-                    <div class="feature-icon mb-3 text-warning">
-                        <span><i class="bi bi-bell"></i></span>
-                    </div>
-                    <h5 class="fw-semibold text-dark">Умные уведомления</h5>
-                    <p class="text-secondary">Настраиваемые правила напоминаний и оповещений помогут не пропустить важное.</p>
                 </div>
             </div>
         </div>
@@ -150,207 +71,70 @@
         <div class="surface-panel px-4 px-lg-5 py-5">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6">
-                    <div class="badge-soft mb-3">
-                        <span class="pulse-dot"></span>
-                        Workflow команды
-                    </div>
-                    <h2 class="fw-bold text-dark">Прозрачный процесс от заявки до выдачи</h2>
-                    <p class="text-secondary mb-4">Сценарии автоматизации помогают вашей команде экономить часы рутины. Настройте чек-листы, SLA и уведомления по этапам, чтобы всегда знать, что происходит.</p>
+                    <h2 class="fw-bold text-dark">Чёткий процесс от заявки до выдачи</h2>
+                    <p class="text-secondary mb-4">Наша система поддерживает весь цикл: регистрация запросов, подбор оборудования, контроль выполнения и итоговая аналитика. Каждому этапу отвечает своё представление.</p>
                     <ul class="list-unstyled d-flex flex-column gap-3">
                         <li class="d-flex align-items-start gap-3">
                             <div class="step-index">1</div>
                             <div>
-                                <strong>Создание задачи или заявки</strong>
-                                <div class="text-secondary">Формируйте из почты, чатов или вручную — система автоматически присваивает приоритет.</div>
+                                <strong>Фиксация заявки</strong>
+                                <div class="text-secondary">Создайте задачу вручную или импортируйте из почты/чатов.</div>
                             </div>
                         </li>
                         <li class="d-flex align-items-start gap-3">
                             <div class="step-index">2</div>
                             <div>
-                                <strong>Подбор оборудования и исполнителей</strong>
-                                <div class="text-secondary">Подсказки по доступным ресурсам учитывают график, тип устройства и его состояние.</div>
+                                <strong>Подбор ресурсов</strong>
+                                <div class="text-secondary">Под рукой актуальные данные инвентаря, статус обслуживания и ответственные.</div>
                             </div>
                         </li>
                         <li class="d-flex align-items-start gap-3">
                             <div class="step-index">3</div>
                             <div>
-                                <strong>Контроль выполнения и отчётность</strong>
-                                <div class="text-secondary">Автоматические отчёты дают прозрачную картину по срокам и затратам.</div>
+                                <strong>Контроль исполнения</strong>
+                                <div class="text-secondary">Отчёты, комментарии, файлы и чек-листы — всё в контексте задачи.</div>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <div class="col-lg-6" data-aos="zoom-in" data-aos-delay="150">
                     <div class="glassy-card p-4 p-lg-5">
-                        <h5 class="mb-4">Командное табло</h5>
+                        <h5 class="mb-4">Примеры активности</h5>
                         <div class="timeline">
                             <div class="timeline-item">
                                 <div class="timeline-badge bg-primary"></div>
                                 <div>
-                                    <strong>Новая заявка «VR комплекты»</strong>
-                                    <div class="small text-light text-opacity-70">Назначена: Андрей Л, срок 14:00</div>
+                                    <strong>Задача «Выдать ноутбуки» обновлена</strong>
+                                    <div class="small text-secondary">Назначена: отдел ИТ</div>
                                 </div>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-badge bg-success"></div>
                                 <div>
-                                    <strong>Инвентаризация хим. лаборатории</strong>
-                                    <div class="small text-light text-opacity-70">Обновлено 12 позиций</div>
+                                    <strong>Инвентарь «MacBook Pro 14» выдан</strong>
+                                    <div class="small text-secondary">Ответственный: Мария Сидорова</div>
                                 </div>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-badge bg-warning"></div>
                                 <div>
-                                    <strong>Задача «Обновить ПО принтеров»</strong>
-                                    <div class="small text-light text-opacity-70">Просрочка 1 день — эскалировано</div>
+                                    <strong>Запланировано обслуживание склада</strong>
+                                    <div class="small text-secondary">Дата: {{ homepage.next_maintenance|date:"d.m.Y"|default:"—" }}</div>
                                 </div>
                             </div>
                             <div class="timeline-item">
-                                <div class="timeline-badge bg-info"></div>
+                                <div class="timeline-badge bg-dark"></div>
                                 <div>
-                                    <strong>Выдано оборудование «Сенсоры IoT»</strong>
-                                    <div class="small text-light text-opacity-70">Получатель: команда R&amp;D</div>
+                                    <strong>Добавлен новый участник</strong>
+                                    <div class="small text-secondary">Статистика команды обновлена</div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="mt-4 d-flex justify-content-between align-items-center">
-                            <div>
-                                <div class="small text-uppercase text-light text-opacity-70">Команда</div>
-                                <div class="h5 mb-0">Синхронизируйте пользователей</div>
-                            </div>
-                            <a href="{% url 'accounts:team_directory' %}" class="btn btn-outline-light btn-sm px-3">Смотреть</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    {% if not user.is_authenticated %}
-    <section class="py-5" data-aos="fade-up">
-        <div class="glassy-card p-4 p-lg-5 text-center">
-            <h2 class="fw-bold mb-3">Присоединяйтесь и синхронизируйте команду</h2>
-            <p class="text-light text-opacity-75 mb-4">Создайте рабочее пространство, пригласите коллег и держите задачи и оборудование в фокусе. Первые 14 дней — бесплатно.</p>
-            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
-                <a href="{% url 'inventory:asset_list' %}" class="btn btn-primary btn-lg px-4"><i class="bi bi-rocket-takeoff me-2"></i>Каталог оборудования</a>
-                <a href="{% url 'tasks:board' %}" class="btn btn-outline-light btn-lg px-4"><i class="bi bi-kanban me-2"></i>Канбан-доска</a>
-            </div>
-        </div>
-    </section>
-    {% endif %}
 </div>
-
-<style>
-    .feature-card {
-        border-radius: 1.4rem;
-        background: rgba(255, 255, 255, 0.92);
-        border: 1px solid rgba(15, 23, 42, 0.05);
-        box-shadow: 0 22px 45px rgba(15, 23, 42, 0.15);
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 30px 60px rgba(15, 23, 42, 0.18);
-    }
-
-    .feature-icon span {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 48px;
-        height: 48px;
-        border-radius: 16px;
-        background: rgba(79, 70, 229, 0.1);
-        font-size: 1.3rem;
-    }
-
-    .feature-icon.text-success span {
-        background: rgba(34, 197, 94, 0.12);
-        color: #15803d;
-    }
-
-    .feature-icon.text-info span {
-        background: rgba(6, 182, 212, 0.12);
-        color: #0e7490;
-    }
-
-    .feature-icon.text-warning span {
-        background: rgba(250, 204, 21, 0.15);
-        color: #a16207;
-    }
-
-    .feature-icon.text-primary span {
-        color: #3730a3;
-    }
-
-    .workflow-section .step-index {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        background: linear-gradient(125deg, rgba(79, 70, 229, 0.12), rgba(6, 182, 212, 0.12));
-        color: #3730a3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 600;
-    }
-
-    .timeline {
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-    }
-
-    .timeline-item {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .timeline-badge {
-        width: 14px;
-        height: 14px;
-        border-radius: 999px;
-        position: relative;
-        flex-shrink: 0;
-        box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
-    }
-
-    .timeline-badge::after {
-        content: "";
-        position: absolute;
-        width: 2px;
-        height: 70px;
-        background: rgba(255, 255, 255, 0.12);
-        left: 50%;
-        top: 100%;
-        transform: translateX(-50%);
-    }
-
-    .timeline-item:last-child .timeline-badge::after {
-        display: none;
-    }
-
-    .btn-outline-dark {
-        border-color: rgba(15, 23, 42, 0.2);
-        color: #0f172a;
-    }
-
-    .btn-outline-dark:hover {
-        background: rgba(15, 23, 42, 0.06);
-        color: #0f172a;
-    }
-
-    @media (max-width: 767.98px) {
-        .surface-panel {
-            border-radius: 1.25rem;
-        }
-
-        .feature-card {
-            border-radius: 1.2rem;
-        }
-    }
-</style>
 
 {% endblock %}

@@ -51,19 +51,19 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="task-board">
+            <div class="task-board" id="task-board" data-status-update-pattern="{% url 'tasks:task_status_update' 0 %}">
                 {% for column_key, column in board_columns.items %}
-                    <div class="task-column">
+                    <div class="task-column" data-status="{{ column_key }}">
                         <div class="task-column-header d-flex justify-content-between align-items-center mb-3">
                             <h6 class="text-uppercase small text-secondary mb-0">{{ column.label }}</h6>
                             <span class="badge bg-dark text-light">{{ column.items|length }}</span>
                         </div>
                         <div class="d-flex flex-column gap-3">
                             {% for task in column.items %}
-                                <article class="task-card p-3">
+                                <article class="task-card p-3" draggable="true" data-task-id="{{ task.id }}" data-status="{{ column_key }}">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="fw-semibold mb-0">{{ task.title }}</h5>
-                                        <span class="badge bg-primary bg-opacity-25 text-dark">{{ task.get_priority_display }}</span>
+                                        <h5 class="fw-semibold mb-0 task-title">{{ task.title }}</h5>
+                                        <span class="badge bg-primary bg-opacity-25 text-dark priority-badge">{{ task.get_priority_display }}</span>
                                     </div>
                                     <p class="text-secondary small mb-2">{{ task.description|default:"Нет описания"|truncatewords:16 }}</p>
                                     <div class="d-flex justify-content-between text-secondary small">
@@ -170,11 +170,126 @@
         box-shadow: 0 18px 35px rgba(15, 23, 42, 0.2);
     }
 
+    .task-card.shake {
+        animation: taskShake 0.4s;
+    }
+
+    @keyframes taskShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-4px); }
+        50% { transform: translateX(4px); }
+        75% { transform: translateX(-2px); }
+    }
+
+    .task-card.dragging {
+        opacity: 0.6;
+    }
+
+    .task-column.drag-target {
+        border-color: rgba(29, 78, 216, 0.35);
+        box-shadow: inset 0 0 0 2px rgba(29, 78, 216, 0.25);
+    }
+
     .activity-card {
         border-radius: 1.15rem;
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid rgba(15, 23, 42, 0.06);
         box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
     }
+
+    .priority-badge {
+        white-space: nowrap;
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const board = document.getElementById('task-board');
+        if (!board) return;
+
+        const statusUrlPattern = board.dataset.statusUpdatePattern;
+
+        function getCsrfToken() {
+            const name = 'csrftoken=';
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name)) {
+                    return cookie.substring(name.length);
+                }
+            }
+            return '';
+        }
+
+        let draggedCard = null;
+
+        document.querySelectorAll('.task-card').forEach(card => {
+            card.addEventListener('dragstart', (event) => {
+                draggedCard = card;
+                card.classList.add('dragging');
+                event.dataTransfer.effectAllowed = 'move';
+            });
+
+            card.addEventListener('dragend', () => {
+                draggedCard?.classList.remove('dragging');
+                draggedCard = null;
+                document.querySelectorAll('.task-column').forEach(col => col.classList.remove('drag-target'));
+            });
+        });
+
+        document.querySelectorAll('.task-column').forEach(column => {
+            column.addEventListener('dragover', (event) => {
+                if (draggedCard) {
+                    event.preventDefault();
+                    column.classList.add('drag-target');
+                }
+            });
+
+            column.addEventListener('dragleave', () => {
+                column.classList.remove('drag-target');
+            });
+
+            column.addEventListener('drop', (event) => {
+                event.preventDefault();
+                column.classList.remove('drag-target');
+                if (!draggedCard) return;
+
+                const newStatus = column.dataset.status;
+                const taskId = draggedCard.dataset.taskId;
+
+                if (!newStatus || !taskId || draggedCard.dataset.status === newStatus) {
+                    return;
+                }
+
+                const endpoint = statusUrlPattern.replace(/0\/?$/, `${taskId}/`);
+
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to update status');
+                        }
+                        return response.json();
+                    })
+                    .then(() => {
+                        draggedCard.dataset.status = newStatus;
+                        column.querySelector('.d-flex.flex-column.gap-3').appendChild(draggedCard);
+                    })
+                    .catch(() => {
+                        draggedCard.classList.add('shake');
+                        setTimeout(() => draggedCard.classList.remove('shake'), 600);
+                    });
+            });
+        });
+    });
+</script>
 {% endblock %}

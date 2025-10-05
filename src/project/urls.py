@@ -4,9 +4,26 @@ from django.contrib import admin
 from django.shortcuts import render
 from django.urls import include, path
 
+from src.apps.inventory.models import Asset, MaintenanceRecord
+from src.apps.tasks.models import Project, Task
+
 
 def index(request):
-    return render(request, "index.html")
+    context = {
+        "homepage": {
+            "task_count": Task.objects.filter(is_archived=False).count(),
+            "project_total": Project.objects.filter(is_active=True).count(),
+            "asset_count": Asset.objects.count(),
+            "maintenance_planned": MaintenanceRecord.objects.filter(
+                status=MaintenanceRecord.Status.PLANNED
+            ).count(),
+            "next_maintenance": MaintenanceRecord.objects.filter(
+                status=MaintenanceRecord.Status.PLANNED,
+                scheduled_for__isnull=False,
+            ).order_by("scheduled_for").values_list("scheduled_for", flat=True).first(),
+        }
+    }
+    return render(request, "index.html", context)
 
 
 urlpatterns = [

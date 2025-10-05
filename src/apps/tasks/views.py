@@ -1,9 +1,12 @@
 from collections import OrderedDict
+import json
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count
+from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 
 from src.apps.accounts.mixins import AdminRequiredMixin
@@ -109,3 +112,25 @@ class ProjectCreateView(AdminRequiredMixin, CreateView):
             self.object.members.add(self.request.user)
         messages.success(self.request, "Проект создан")
         return response
+
+
+class TaskStatusUpdateView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            payload = json.loads(request.body.decode("utf-8"))
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            return HttpResponseBadRequest("Invalid payload")
+
+        status = payload.get("status")
+        if status not in Task.Status.values:
+            return HttpResponseBadRequest("Unsupported status")
+
+        task = Task.objects.select_related("project").filter(pk=pk).first()
+        if task is None:
+            return HttpResponseBadRequest("Task not found")
+
+        if not request.user.is_admin_role and request.user not in task.project.members.all():
+            return HttpResponseBadRequest("Forbidden")
+
+        task.set_status(status, user=request.user)
+        return JsonResponse({"status": task.get_status_display()})

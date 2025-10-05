@@ -105,7 +105,7 @@
                 <div class="d-flex flex-wrap gap-2 align-items-center">
                     <div class="d-flex gap-1" id="asset-status-filters">
                         <button type="button" class="filter-chip active" data-status-filter="all">Все</button>
-                        {% for status, label in assets.model.Status.choices %}
+                        {% for status, label in status_filters %}
                             <button type="button" class="filter-chip" data-status-filter="{{ status }}">{{ label }}</button>
                         {% endfor %}
                     </div>
@@ -137,7 +137,7 @@
                                 <td>{{ asset.name }}</td>
                                 <td>{{ asset.category.name }}</td>
                                 <td>
-                                    <span class="badge bg-primary bg-opacity-25 text-dark">{{ asset.get_status_display }}</span>
+                                    <span class="status-pill"><span class="dot"></span>{{ asset.get_status_display }}</span>
                                 </td>
                                 <td>{{ asset.location.name|default:"—" }}</td>
                                 <td>{{ asset.assigned_to.get_display_name|default:"—" }}</td>

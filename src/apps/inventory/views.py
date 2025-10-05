@@ -39,6 +39,11 @@ class AssetOverviewView(LoginRequiredMixin, TemplateView):
             Q(status=Asset.Status.RESERVED) | Q(status=Asset.Status.MAINTENANCE)
         )[:6]
 
+        status_choices = [
+            (choice.value, choice.label)
+            for choice in Asset.Status
+        ]
+
         context.update(
             {
                 "assets": assets[:25],
@@ -50,6 +55,7 @@ class AssetOverviewView(LoginRequiredMixin, TemplateView):
                 "low_stock_assets": low_stock_assets,
                 "current_date": timezone.now().date(),
                 "can_manage": getattr(self.request.user, "is_admin_role", False),
+                "status_filters": status_choices,
             }
         )
         return context

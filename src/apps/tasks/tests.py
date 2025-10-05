@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -95,3 +97,22 @@ class TaskBoardViewTests(TestCase):
         self.assertRedirects(response, reverse("tasks:board"))
         project = Project.objects.get(code="proj-1")
         self.assertIn(admin, project.members.all())
+
+    def test_status_update_endpoint(self):
+        self.client.force_login(self.user)
+        response = self.client.post(
+            reverse("tasks:task_status_update", args=[self.task.pk]),
+            data="{}",
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 400)
+
+        payload = {"status": Task.Status.REVIEW}
+        response = self.client.post(
+            reverse("tasks:task_status_update", args=[self.task.pk]),
+            data=json.dumps(payload),
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.status, Task.Status.REVIEW)
