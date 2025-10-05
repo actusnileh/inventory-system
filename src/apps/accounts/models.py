@@ -36,6 +36,7 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, username: str, email: str | None = None, password: str | None = None, **extra_fields):
+        extra_fields.setdefault("role", self.model.Role.USER)
         if not username:
             raise ValueError("Пользователь должен иметь имя пользователя")
         email = self.normalize_email(email)
@@ -47,7 +48,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, username: str, email: str | None = None, password: str | None = None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("role", User.Role.ADMIN)
+        extra_fields.setdefault("role", self.model.Role.ADMIN)
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Суперпользователь должен иметь is_staff=True")
@@ -62,9 +63,7 @@ class User(AbstractUser):
 
     class Role(models.TextChoices):
         ADMIN = "admin", "Администратор"
-        MANAGER = "manager", "Куратор"
-        EMPLOYEE = "employee", "Сотрудник"
-        VIEWER = "viewer", "Наблюдатель"
+        USER = "user", "Пользователь"
 
     department = models.ForeignKey(
         Department,
@@ -74,7 +73,7 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
-    role = models.CharField("Роль", max_length=20, choices=Role.choices, default=Role.EMPLOYEE)
+    role = models.CharField("Роль", max_length=20, choices=Role.choices, default=Role.USER)
     job_title = models.CharField("Должность", max_length=120, blank=True)
     phone = models.CharField(
         "Телефон",
@@ -82,7 +81,7 @@ class User(AbstractUser):
         blank=True,
         validators=[RegexValidator(r"^[0-9\-\+\(\)\s]+$", message="Используйте допустимый формат номера")],
     )
-    user_timezone = models.CharField("Часовой пояс", max_length=64, default="Europe/Moscow")
+    timezone = models.CharField("Часовой пояс", max_length=64, default="Europe/Moscow")
     avatar = models.ImageField("Аватар", upload_to="avatars/", blank=True, null=True)
     bio = models.TextField("О себе", blank=True)
     last_activity = models.DateTimeField("Последняя активность", default=timezone.now)
@@ -109,6 +108,8 @@ class User(AbstractUser):
     def is_admin_role(self) -> bool:
         return self.role == self.Role.ADMIN
 
-    @property
-    def is_manager_role(self) -> bool:
-        return self.role == self.Role.MANAGER
+    def promote_to_admin(self) -> None:
+        self.role = self.Role.ADMIN
+        self.is_staff = True
+        self.is_superuser = True
+        self.save(update_fields=["role", "is_staff", "is_superuser"])

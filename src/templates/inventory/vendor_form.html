@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Новый поставщик{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="surface-panel p-4 p-lg-5 mx-auto" style="max-width: 640px;" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold text-dark mb-0">Добавить поставщика</h1>
+            <a href="{% url 'inventory:asset_list' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Назад</a>
+        </div>
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="col-12 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-lg px-4">Создать</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

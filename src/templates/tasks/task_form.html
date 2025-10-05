@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{% if task %}Редактировать задачу{% else %}Новая задача{% endif %}{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="surface-panel p-4 p-lg-5" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <div class="badge-soft mb-2">
+                    <span class="pulse-dot"></span>
+                    Планирование задач
+                </div>
+                <h1 class="fw-bold text-dark mb-0">{% if task %}Редактирование: {{ task.title }}{% else %}Создать задачу{% endif %}</h1>
+            </div>
+            <a href="{% url 'tasks:board' %}" class="btn btn-outline-dark"><i class="bi bi-kanban"></i> Доска</a>
+        </div>
+        <form method="post" class="row g-3">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="col-12">
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                </div>
+            {% endif %}
+            {% for field in form %}
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="text-secondary">{{ field.help_text|safe }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="col-12 d-flex justify-content-end mt-2">
+                <button type="submit" class="btn btn-primary btn-lg px-4">Сохранить</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

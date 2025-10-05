@@ -43,8 +43,12 @@
             <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
                 <h2 class="fw-bold text-dark mb-0">Канбан доска</h2>
                 <div class="d-flex gap-2">
-                    <a href="{% url 'admin:tasks_task_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Создать задачу</a>
-                    <a href="{% url 'admin:tasks_project_add' %}" class="btn btn-outline-dark">Новый проект</a>
+                    {% if can_create_task %}
+                        <a href="{% url 'tasks:task_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Создать задачу</a>
+                    {% endif %}
+                    {% if can_create_project %}
+                        <a href="{% url 'tasks:project_create' %}" class="btn btn-outline-dark">Новый проект</a>
+                    {% endif %}
                 </div>
             </div>
             <div class="task-board">
@@ -73,6 +77,11 @@
                                         <span>Дедлайн: {{ task.due_date|date:"d.m"|default:"—" }}</span>
                                         <span>Трудозатраты: {{ task.actual_hours|default:"—" }} ч</span>
                                     </div>
+                                    {% if can_create_task %}
+                                        <div class="mt-3 text-end">
+                                            <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                                        </div>
+                                    {% endif %}
                                 </article>
                             {% empty %}
                                 <div class="text-secondary small">Нет задач в этом статусе.</div>

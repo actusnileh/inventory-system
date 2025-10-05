@@ -385,10 +385,12 @@
                 {% if user.is_authenticated %}
                 <ul class="navbar-nav align-items-lg-center gap-lg-2">
                     <li class="nav-item"><a class="nav-link" href="{% url 'index' %}"><i class="bi bi-compass"></i>Обзор</a></li>
+                    {% if user.is_authenticated and user.is_admin_role %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'accounts:team_directory' %}"><i class="bi bi-people"></i>Команда</a></li>
+                    {% endif %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'inventory:asset_list' %}"><i class="bi bi-archive"></i>Инвентарь</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'tasks:board' %}"><i class="bi bi-list-check"></i>Задачи</a></li>
-                    {% if user.is_admin %}
+                    {% if user.is_staff %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-magic"></i>Панель</a></li>
                     {% endif %}
                     <li class="nav-item dropdown">
@@ -399,10 +401,15 @@
                             {{ user.username }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i>Профиль</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i>Настройки</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i>Профиль</a></li>
+                            <li><a class="dropdown-item" href="{% url 'accounts:profile' %}#settings"><i class="bi bi-gear"></i>Настройки</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right"></i>Выйти</a></li>
+                            <li>
+                                <form method="post" action="{% url 'accounts:logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger w-100 text-start"><i class="bi bi-box-arrow-right"></i>Выйти</button>
+                                </form>
+                            </li>
                         </ul>
                     </li>
                 </ul>

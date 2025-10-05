@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ asset.name }}{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="surface-panel p-4 p-lg-5" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <div class="badge-soft mb-2">
+                    <span class="pulse-dot"></span>
+                    Карточка оборудования
+                </div>
+                <h1 class="fw-bold text-dark mb-0">{{ asset.name }}</h1>
+                <p class="text-secondary mb-0">Инвентарный номер: {{ asset.inventory_code }}</p>
+            </div>
+            <div class="d-flex gap-2">
+                {% if request.user.is_admin_role %}
+                    <a href="{% url 'inventory:asset_update' asset.pk %}" class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Редактировать</a>
+                {% endif %}
+                <a href="{% url 'inventory:asset_list' %}" class="btn btn-outline-dark"><i class="bi bi-arrow-left"></i> Назад</a>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="glassy-card p-4 h-100">
+                    <h5 class="text-light text-uppercase small mb-3">Основная информация</h5>
+                    <dl class="row text-light text-opacity-85 mb-0">
+                        <dt class="col-sm-5">Категория</dt>
+                        <dd class="col-sm-7">{{ asset.category.name }}</dd>
+                        <dt class="col-sm-5">Статус</dt>
+                        <dd class="col-sm-7">{{ asset.get_status_display }}</dd>
+                        <dt class="col-sm-5">Состояние</dt>
+                        <dd class="col-sm-7">{{ asset.get_condition_display }}</dd>
+                        <dt class="col-sm-5">Локация</dt>
+                        <dd class="col-sm-7">{{ asset.location.name|default:"—" }}</dd>
+                        <dt class="col-sm-5">Ответственный</dt>
+                        <dd class="col-sm-7">{{ asset.custodian.get_display_name|default:"—" }}</dd>
+                        <dt class="col-sm-5">Выдан пользователю</dt>
+                        <dd class="col-sm-7">{{ asset.assigned_to.get_display_name|default:"—" }}</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="glassy-card p-4 h-100">
+                    <h5 class="text-light text-uppercase small mb-3">Закупка</h5>
+                    <dl class="row text-light text-opacity-85 mb-0">
+                        <dt class="col-sm-5">Поставщик</dt>
+                        <dd class="col-sm-7">{{ asset.vendor.name|default:"—" }}</dd>
+                        <dt class="col-sm-5">Дата закупки</dt>
+                        <dd class="col-sm-7">{{ asset.purchase_date|date:"d.m.Y"|default:"—" }}</dd>
+                        <dt class="col-sm-5">Стоимость</dt>
+                        <dd class="col-sm-7">{{ asset.purchase_price|default:"—" }}</dd>
+                        <dt class="col-sm-5">Гарантия до</dt>
+                        <dd class="col-sm-7">{{ asset.warranty_expiration|date:"d.m.Y"|default:"—" }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        {% if asset.notes or asset.specs %}
+            <div class="mt-4 surface-panel p-4">
+                {% if asset.specs %}
+                    <h5 class="fw-semibold text-dark">Характеристики</h5>
+                    <pre class="bg-light rounded p-3">{{ asset.specs|pprint }}</pre>
+                {% endif %}
+                {% if asset.notes %}
+                    <h5 class="fw-semibold text-dark mt-3">Заметки</h5>
+                    <p class="text-secondary">{{ asset.notes }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

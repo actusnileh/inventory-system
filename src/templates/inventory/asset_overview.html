@@ -35,6 +35,16 @@
                         </div>
                     </div>
                 </div>
+                {% if can_manage %}
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{% url 'inventory:asset_create' %}" class="btn btn-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Новое оборудование</a>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'inventory:vendor_create' %}" class="btn btn-outline-light flex-grow-1">Поставщик</a>
+                            <a href="{% url 'inventory:category_create' %}" class="btn btn-outline-light flex-grow-1">Категория</a>
+                            <a href="{% url 'inventory:location_create' %}" class="btn btn-outline-light flex-grow-1">Локация</a>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -90,12 +100,14 @@
         <div class="surface-panel p-4 p-lg-5">
             <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
                 <h2 class="fw-bold text-dark mb-0">Список оборудования</h2>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'admin:inventory_asset_add' %}" class="btn btn-primary">
-                        <i class="bi bi-plus me-2"></i>Добавить позицию
-                    </a>
-                    <a href="{% url 'admin:inventory_asset_changelist' %}" class="btn btn-outline-dark">Открыть в админке</a>
-                </div>
+                {% if can_manage %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'inventory:asset_create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus me-2"></i>Добавить позицию
+                        </a>
+                        <a href="{% url 'inventory:maintenance_create' %}" class="btn btn-outline-dark">Запланировать сервис</a>
+                    </div>
+                {% endif %}
             </div>
             <div class="table-responsive">
                 <table class="table align-middle table-hover">
@@ -107,7 +119,7 @@
                             <th class="border-0">Статус</th>
                             <th class="border-0">Локация</th>
                             <th class="border-0">Выдан</th>
-                            <th class="border-0 text-end">Обновлено</th>
+                            <th class="border-0 text-end">Действия</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -121,7 +133,12 @@
                                 </td>
                                 <td>{{ asset.location.name|default:"—" }}</td>
                                 <td>{{ asset.assigned_to.get_display_name|default:"—" }}</td>
-                                <td class="text-secondary text-end small">{{ asset.updated_at|date:"d.m.Y" }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'inventory:asset_detail' asset.pk %}" class="btn btn-sm btn-outline-dark">Подробнее</a>
+                                    {% if can_manage %}
+                                        <a href="{% url 'inventory:asset_update' asset.pk %}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -138,7 +155,12 @@
         <div class="surface-panel p-4 p-lg-5">
             <div class="row g-4">
                 <div class="col-lg-6">
-                    <h3 class="fw-semibold text-dark mb-3">Ближайшее обслуживание</h3>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="fw-semibold text-dark mb-0">Ближайшее обслуживание</h3>
+                        {% if can_manage %}
+                            <a href="{% url 'inventory:maintenance_create' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus"></i> Запланировать</a>
+                        {% endif %}
+                    </div>
                     <div class="d-flex flex-column gap-3">
                         {% for record in upcoming_maintenance %}
                             <div class="maintenance-card p-3">
@@ -163,7 +185,7 @@
                         {% for asset in low_stock_assets %}
                             <div class="maintenance-card p-3">
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <strong>{{ asset.name }}</strong>
+                                    <a href="{% url 'inventory:asset_detail' asset.pk %}" class="fw-semibold text-dark text-decoration-none">{{ asset.name }}</a>
                                     <span class="badge bg-warning text-dark">{{ asset.get_status_display }}</span>
                                 </div>
                                 <div class="text-secondary small">{{ asset.location.name|default:"Локация не указана" }}</div>

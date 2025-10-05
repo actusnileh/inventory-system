@@ -1,22 +1,25 @@
 from django.urls import path
-from django.contrib.auth import views as auth_views
 
-from .views import TeamDirectoryView, RegisterView
-from .forms import StyledAuthenticationForm
+from .views import (
+    LoginView,
+    LogoutView,
+    ProfileUpdateView,
+    RegisterView,
+    TeamDirectoryView,
+    TeamMemberCreateView,
+    TeamMemberUpdateView,
+    DepartmentCreateView,
+)
 
 app_name = "accounts"
 
 urlpatterns = [
-    path("team/", TeamDirectoryView.as_view(), name="team_directory"),
+    path("login/", LoginView.as_view(), name="login"),
     path("register/", RegisterView.as_view(), name="register"),
-    path(
-        "login/",
-        auth_views.LoginView.as_view(template_name="accounts/login.html", form_class=StyledAuthenticationForm),
-        name="login",
-    ),
-    path(
-        "logout/",
-        auth_views.LogoutView.as_view(next_page="index"),
-        name="logout",
-    ),
+    path("logout/", LogoutView.as_view(), name="logout"),
+    path("profile/", ProfileUpdateView.as_view(), name="profile"),
+    path("team/", TeamDirectoryView.as_view(), name="team_directory"),
+    path("team/add/", TeamMemberCreateView.as_view(), name="team_create"),
+    path("team/<int:pk>/edit/", TeamMemberUpdateView.as_view(), name="team_update"),
+    path("team/departments/add/", DepartmentCreateView.as_view(), name="department_create"),
 ]

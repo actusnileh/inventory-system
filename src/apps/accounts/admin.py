@@ -79,7 +79,7 @@ class UserAdmin(BaseUserAdmin):
                     "role",
                     "avatar",
                     "phone",
-                    "user_timezone",
+                    "timezone",
                     "bio",
                 )
             },

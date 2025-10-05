@@ -33,19 +33,43 @@ class AssetOverviewViewTests(TestCase):
             scheduled_for=timezone.now().date(),
             responsible=self.manager,
         )
+        self.admin = user_model.objects.create_user(
+            username="admin",
+            email="admin@example.com",
+            password="inventory-pass",
+        )
+        self.admin.promote_to_admin()
 
     def test_asset_overview_page_success(self):
+        self.client.force_login(self.manager)
         response = self.client.get(reverse("inventory:asset_list"))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "inventory/asset_overview.html")
 
     def test_context_contains_assets(self):
+        self.client.force_login(self.manager)
         response = self.client.get(reverse("inventory:asset_list"))
         assets = response.context["assets"]
         self.assertIn(self.asset, list(assets))
         self.assertGreaterEqual(response.context["asset_total"], 1)
 
     def test_status_breakdown_has_entries(self):
+        self.client.force_login(self.manager)
         response = self.client.get(reverse("inventory:asset_list"))
         breakdown = list(response.context["status_breakdown"])
         self.assertTrue(any(item["status"] == Asset.Status.IN_USE for item in breakdown))
+
+    def test_create_requires_admin(self):
+        self.client.force_login(self.manager)
+        response = self.client.get(reverse("inventory:asset_create"))
+        self.assertEqual(response.status_code, 403)
+
+    def test_admin_can_access_create(self):
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse("inventory:asset_create"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_detail_view_accessible(self):
+        self.client.force_login(self.manager)
+        response = self.client.get(reverse("inventory:asset_detail", args=[self.asset.pk]))
+        self.assertEqual(response.status_code, 200)
