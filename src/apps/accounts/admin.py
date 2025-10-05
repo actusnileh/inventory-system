@@ -3,9 +3,16 @@ from __future__ import annotations
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.models import Permission
 from django.utils.translation import gettext_lazy as _
 
 from .models import Department, User
+
+
+
+@admin.register(Permission)
+class PermissionAdmin(admin.ModelAdmin):
+    search_fields = ["name"]
 
 
 class DepartmentAdmin(admin.ModelAdmin):
@@ -59,30 +66,36 @@ class UserAdmin(BaseUserAdmin):
     readonly_fields = ("last_login", "date_joined", "last_activity")
 
     fieldsets = (
-        (None, {"fields": ("username", "password")} ),
-        (_("Персональные данные"), {
-            "fields": (
-                "first_name",
-                "last_name",
-                "email",
-                "department",
-                "job_title",
-                "role",
-                "avatar",
-                "phone",
-                "timezone",
-                "bio",
-            )
-        }),
-        (_("Права"), {
-            "fields": (
-                "is_active",
-                "is_staff",
-                "is_superuser",
-                "groups",
-                "user_permissions",
-            )
-        }),
+        (None, {"fields": ("username", "password")}),
+        (
+            _("Персональные данные"),
+            {
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "department",
+                    "job_title",
+                    "role",
+                    "avatar",
+                    "phone",
+                    "timezone",
+                    "bio",
+                )
+            },
+        ),
+        (
+            _("Права"),
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                )
+            },
+        ),
         (_("Важные даты"), {"fields": ("last_login", "date_joined", "last_activity")}),
     )
 

@@ -82,7 +82,7 @@ class User(AbstractUser):
         blank=True,
         validators=[RegexValidator(r"^[0-9\-\+\(\)\s]+$", message="Используйте допустимый формат номера")],
     )
-    timezone = models.CharField("Часовой пояс", max_length=64, default="Europe/Moscow")
+    user_timezone = models.CharField("Часовой пояс", max_length=64, default="Europe/Moscow")
     avatar = models.ImageField("Аватар", upload_to="avatars/", blank=True, null=True)
     bio = models.TextField("О себе", blank=True)
     last_activity = models.DateTimeField("Последняя активность", default=timezone.now)
