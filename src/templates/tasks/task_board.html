@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Задачи{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="mb-5" data-aos="fade-up">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-8">
+                    <div class="badge-soft mb-3">
+                        <span class="pulse-dot"></span>
+                        Канбан и аналитика
+                    </div>
+                    <h1 class="fw-bold text-dark mb-3">Контроль задач и прогресса команды</h1>
+                    <p class="text-secondary mb-0">
+                        Управляйте задачами по проектам, отслеживайте прогресс и смотрите историю активности.
+                        Колонки обновляются автоматически и показывают главные приоритеты.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="glassy-card p-4">
+                        <div class="d-flex justify-content-between text-light text-opacity-80">
+                            <span>Активных проектов</span>
+                            <strong>{{ project_count|default:0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between text-light text-opacity-80 mt-2">
+                            <span>Всего задач</span>
+                            <strong>{{ task_total|default:0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between text-light text-opacity-80 mt-2">
+                            <span>Завершено</span>
+                            <strong>{{ tasks_completed|default:0 }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+                <h2 class="fw-bold text-dark mb-0">Канбан доска</h2>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'admin:tasks_task_add' %}" class="btn btn-primary"><i class="bi bi-plus-lg me-2"></i>Создать задачу</a>
+                    <a href="{% url 'admin:tasks_project_add' %}" class="btn btn-outline-dark">Новый проект</a>
+                </div>
+            </div>
+            <div class="task-board">
+                {% for column_key, column in board_columns.items %}
+                    <div class="task-column">
+                        <div class="task-column-header d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="text-uppercase small text-secondary mb-0">{{ column.label }}</h6>
+                            <span class="badge bg-dark text-light">{{ column.items|length }}</span>
+                        </div>
+                        <div class="d-flex flex-column gap-3">
+                            {% for task in column.items %}
+                                <article class="task-card p-3">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="fw-semibold mb-0">{{ task.title }}</h5>
+                                        <span class="badge bg-primary bg-opacity-25 text-dark">{{ task.get_priority_display }}</span>
+                                    </div>
+                                    <p class="text-secondary small mb-2">{{ task.description|default:"Нет описания"|truncatewords:16 }}</p>
+                                    <div class="d-flex justify-content-between text-secondary small">
+                                        <span><i class="bi bi-folder2-open me-1"></i>{{ task.project.name }}</span>
+                                        <span><i class="bi bi-person me-1"></i>{{ task.assignee.get_display_name|default:"Не назначено" }}</span>
+                                    </div>
+                                    <div class="progress mt-3" style="height: 6px;">
+                                        <div class="progress-bar bg-gradient" role="progressbar" style="width: {{ task.progress }}%" aria-valuenow="{{ task.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <div class="d-flex justify-content-between text-secondary small mt-2">
+                                        <span>Дедлайн: {{ task.due_date|date:"d.m"|default:"—" }}</span>
+                                        <span>Трудозатраты: {{ task.actual_hours|default:"—" }} ч</span>
+                                    </div>
+                                </article>
+                            {% empty %}
+                                <div class="text-secondary small">Нет задач в этом статусе.</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section data-aos="fade-up" data-aos-delay="150">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h3 class="fw-semibold text-dark mb-3">Последние действия</h3>
+                    <div class="d-flex flex-column gap-3">
+                        {% for activity in recent_activity %}
+                            <div class="activity-card p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong>{{ activity.task.title }}</strong>
+                                    <span class="badge bg-dark text-light">{{ activity.get_action_display }}</span>
+                                </div>
+                                <div class="text-secondary small mb-1">{{ activity.author.get_display_name|default:"Система" }}</div>
+                                <div class="text-secondary small">{{ activity.created_at|date:"d.m.Y H:i" }}</div>
+                            </div>
+                        {% empty %}
+                            <div class="text-secondary small">Журнал активности пуст.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="fw-semibold text-dark mb-3">Комментарии</h3>
+                    <div class="d-flex flex-column gap-3">
+                        {% for comment in recent_comments %}
+                            <div class="activity-card p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong>{{ comment.task.title }}</strong>
+                                    <span class="badge bg-primary bg-opacity-25 text-dark">{{ comment.author.get_display_name|default:"Без автора" }}</span>
+                                </div>
+                                <p class="text-secondary small mb-2">{{ comment.message|truncatewords:18 }}</p>
+                                <div class="text-secondary small">{{ comment.created_at|date:"d.m.Y H:i" }}</div>
+                            </div>
+                        {% empty %}
+                            <div class="text-secondary small">Нет комментариев.</div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="text-secondary text-uppercase small mb-2">Приоритеты</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% for item in priority_breakdown %}
+                                <span class="badge bg-dark text-light">{{ item.label }} — {{ item.total }}</span>
+                            {% empty %}
+                                <span class="text-secondary small">Пока нет данных</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .task-board {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    }
+
+    .task-column {
+        border-radius: 1.3rem;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
+        padding: 1.5rem;
+    }
+
+    .task-card {
+        border-radius: 1.1rem;
+        background: rgba(248, 250, 252, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        box-shadow: 0 12px 25px rgba(15, 23, 42, 0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .task-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 35px rgba(15, 23, 42, 0.2);
+    }
+
+    .activity-card {
+        border-radius: 1.15rem;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .progress-bar.bg-gradient {
+        background: linear-gradient(120deg, var(--brand-2), var(--brand-1));
+    }
+</style>
+{% endblock %}

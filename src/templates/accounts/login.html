@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="surface-panel p-4 p-lg-5 mx-auto" style="max-width: 560px;" data-aos="fade-up">
+        <div class="text-center mb-4">
+            <div class="badge-soft mb-3">
+                <span class="pulse-dot"></span>
+                Добро пожаловать
+            </div>
+            <h1 class="fw-bold text-dark">Войти в систему</h1>
+            <p class="text-secondary">Нет учётной записи? <a href="{% url 'accounts:register' %}">Зарегистрируйтесь</a>.</p>
+        </div>
+        <form method="post" novalidate class="row g-3">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="col-12">
+                    <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                </div>
+            {% endif %}
+            <div class="col-12">
+                <label class="form-label fw-semibold" for="id_username">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% for error in form.username.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold" for="id_password">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% for error in form.password.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-12 d-flex justify-content-between align-items-center mt-2">
+                <a href="{% url 'admin:password_reset' %}" class="text-secondary small">Забыли пароль?</a>
+                <button type="submit" class="btn btn-primary btn-lg px-4">Войти</button>
+            </div>
+        </form>
+    </section>
+</div>
+{% endblock %}

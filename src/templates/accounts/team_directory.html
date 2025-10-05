@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Команда{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="mb-5" data-aos="fade-up">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4 align-items-center">
+                <div class="col-lg-7">
+                    <div class="badge-soft mb-3">
+                        <span class="pulse-dot"></span>
+                        Команда и роли
+                    </div>
+                    <h1 class="fw-bold text-dark mb-3">Вся команда в одном месте</h1>
+                    <p class="text-secondary mb-4">
+                        Следите за активностью сотрудников, структурой отделов и загрузкой. Страница обновляется автоматически,
+                        чтобы у вас был быстрый доступ к ключевой информации.
+                    </p>
+                    <div class="row g-3">
+                        <div class="col-sm-4">
+                            <div class="stat-card glassy-card text-center p-3">
+                                <div class="h4 text-light mb-1">{{ total_users|default:0 }}</div>
+                                <small class="text-light text-opacity-75">Всего пользователей</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card glassy-card text-center p-3">
+                                <div class="h4 text-light mb-1">{{ active_users|default:0 }}</div>
+                                <small class="text-light text-opacity-75">Активных</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="stat-card glassy-card text-center p-3">
+                                <div class="h4 text-light mb-1">{{ departments|length }}</div>
+                                <small class="text-light text-opacity-75">Отделов</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="glassy-card p-4 h-100">
+                        <h5 class="text-light mb-3">Распределение по ролям</h5>
+                        <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
+                            {% for item in role_distribution %}
+                                <li class="d-flex justify-content-between align-items-center">
+                                    <span class="text-light text-opacity-80">{{ item.role|default:"—"|title }}</span>
+                                    <span class="badge bg-primary bg-opacity-25 text-light">{{ item.total }}</span>
+                                </li>
+                            {% empty %}
+                                <li class="text-light text-opacity-70">Пока нет пользователей</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Отделы и команды</h2>
+                    <p class="text-secondary mb-0">Структура компании с закреплёнными сотрудниками.</p>
+                </div>
+                <a href="{% url 'admin:accounts_department_add' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Добавить отдел
+                </a>
+            </div>
+            <div class="row g-4">
+                {% for department in departments %}
+                    <div class="col-md-6 col-xl-4">
+                        <div class="department-card h-100 p-4" style="border-top:4px solid {{ department.color }}">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="fw-semibold mb-0">{{ department.name }}</h5>
+                                <span class="badge bg-light text-dark">{{ department.user_count }}</span>
+                            </div>
+                            <p class="text-secondary small mb-3">{{ department.description|default:"Описание не задано" }}</p>
+                            <div class="d-flex flex-column gap-2">
+                                {% for member in department.users.all|slice:":4" %}
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="avatar rounded-circle" style="width:36px;height:36px;background:rgba(79,70,229,0.15);display:flex;align-items:center;justify-content:center;color:#3730a3;">
+                                            <i class="bi bi-person-fill"></i>
+                                        </span>
+                                        <div class="flex-grow-1">
+                                            <strong class="d-block">{{ member.get_display_name }}</strong>
+                                            <small class="text-secondary">{{ member.job_title|default:"—" }}</small>
+                                        </div>
+                                    </div>
+                                {% empty %}
+                                    <span class="text-secondary small">Нет участников</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info mb-0">Отделы ещё не созданы.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section data-aos="fade-up" data-aos-delay="150">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark mb-0">Недавние сотрудники</h2>
+                <a href="{% url 'admin:accounts_user_add' %}" class="btn btn-outline-dark">
+                    <i class="bi bi-person-plus me-2"></i>Создать пользователя
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle table-hover">
+                    <thead>
+                        <tr class="text-secondary small text-uppercase">
+                            <th class="border-0">Имя</th>
+                            <th class="border-0">Роль</th>
+                            <th class="border-0">Отдел</th>
+                            <th class="border-0">Email</th>
+                            <th class="border-0">Часовой пояс</th>
+                            <th class="border-0 text-end">Активность</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                            <tr>
+                                <td>
+                                    <strong>{{ user.get_display_name }}</strong>
+                                    <div class="text-secondary small">{{ user.job_title|default:"—" }}</div>
+                                </td>
+                                <td>{{ user.get_role_display }}</td>
+                                <td>{{ user.department.name|default:"—" }}</td>
+                                <td>{{ user.email|default:"—" }}</td>
+                                <td>{{ user.timezone }}</td>
+                                <td class="text-end text-secondary small">{{ user.last_activity|date:"d.m.Y H:i" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-secondary py-4">Пока нет пользователей</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .department-card {
+        border-radius: 1.25rem;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.1);
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .department-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 26px 60px rgba(15, 23, 42, 0.16);
+    }
+
+    .stat-card {
+        border-radius: 1.1rem;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+</style>
+{% endblock %}

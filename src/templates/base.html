@@ -373,7 +373,7 @@
 <body>
     <nav class="navbar navbar-expand-lg fixed-top shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="{% url 'index' %}">
                 <span class="me-2 rounded-circle p-2 bg-opacity-10 bg-light text-light"><i class="bi bi-box-seam"></i></span>
                 Инвентаризация<span>·</span>Задачи
             </a>
@@ -384,12 +384,12 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 {% if user.is_authenticated %}
                 <ul class="navbar-nav align-items-lg-center gap-lg-2">
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-compass"></i>Обзор</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-archive"></i>Инвентарь</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-list-check"></i>Задачи</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bar-chart"></i>Аналитика</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'index' %}"><i class="bi bi-compass"></i>Обзор</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'accounts:team_directory' %}"><i class="bi bi-people"></i>Команда</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'inventory:asset_list' %}"><i class="bi bi-archive"></i>Инвентарь</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'tasks:board' %}"><i class="bi bi-list-check"></i>Задачи</a></li>
                     {% if user.is_admin %}
-                    <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-magic"></i>Панель</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-magic"></i>Панель</a></li>
                     {% endif %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -402,14 +402,14 @@
                             <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i>Профиль</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i>Настройки</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right"></i>Выйти</a></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}"><i class="bi bi-box-arrow-right"></i>Выйти</a></li>
                         </ul>
                     </li>
                 </ul>
                 {% else %}
                 <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
-                    <a href="#" class="btn btn-guest btn-login">Войти</a>
-                    <a href="#" class="btn btn-guest btn-register">Регистрация</a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-guest btn-login">Войти</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-guest btn-register">Регистрация</a>
                 </div>
                 {% endif %}
             </div>

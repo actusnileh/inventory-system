@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Инвентарь{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <section class="mb-5" data-aos="fade-up">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-4">
+                <div>
+                    <div class="badge-soft mb-3">
+                        <span class="pulse-dot"></span>
+                        Каталог оборудования
+                    </div>
+                    <h1 class="fw-bold text-dark mb-3">Контроль инвентаря и статусов</h1>
+                    <p class="text-secondary mb-0">
+                        Быстрый обзор наличия, назначений и обслуживания. Все показатели обновляются в реальном времени,
+                        чтобы команды видели актуальную картину.
+                    </p>
+                </div>
+                <div class="glassy-card p-4">
+                    <h6 class="text-light text-uppercase small mb-3">Итоги</h6>
+                    <div class="d-flex flex-column gap-2">
+                        <div class="d-flex justify-content-between">
+                            <span class="text-light text-opacity-75">Всего единиц</span>
+                            <strong>{{ asset_total|default:0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-light text-opacity-75">Поставщиков</span>
+                            <strong>{{ vendor_count|default:0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-light text-opacity-75">Плановых работ</span>
+                            <strong>{{ upcoming_maintenance|length }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" data-aos="fade-up" data-aos-delay="100">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h2 class="fw-semibold text-dark mb-4">Статусы оборудования</h2>
+                    <div class="row g-3">
+                        {% for item in status_breakdown %}
+                            <div class="col-sm-6">
+                                <div class="glassy-card p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong class="d-block text-light">{{ item.status|default:"—"|title }}</strong>
+                                            <small class="text-light text-opacity-70">Статус</small>
+                                        </div>
+                                        <span class="h4 text-light mb-0">{{ item.total }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12">
+                                <div class="alert alert-info mb-0">Нет данных об оборудовании.</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2 class="fw-semibold text-dark mb-4">Сводка по категориям</h2>
+                    <div class="category-list d-flex flex-column gap-3">
+                        {% for category in category_breakdown %}
+                            <div class="category-item p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>{{ category.name }}</strong>
+                                        <div class="text-secondary small">{{ category.description|default:"—" }}</div>
+                                    </div>
+                                    <span class="badge bg-dark text-light">{{ category.asset_total }}</span>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="alert alert-info mb-0">Категории ещё не созданы.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mb-5" data-aos="fade-up" data-aos-delay="150">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+                <h2 class="fw-bold text-dark mb-0">Список оборудования</h2>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'admin:inventory_asset_add' %}" class="btn btn-primary">
+                        <i class="bi bi-plus me-2"></i>Добавить позицию
+                    </a>
+                    <a href="{% url 'admin:inventory_asset_changelist' %}" class="btn btn-outline-dark">Открыть в админке</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-middle table-hover">
+                    <thead>
+                        <tr class="text-secondary small text-uppercase">
+                            <th class="border-0">Инвентарный номер</th>
+                            <th class="border-0">Название</th>
+                            <th class="border-0">Категория</th>
+                            <th class="border-0">Статус</th>
+                            <th class="border-0">Локация</th>
+                            <th class="border-0">Выдан</th>
+                            <th class="border-0 text-end">Обновлено</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in assets %}
+                            <tr>
+                                <td><strong>{{ asset.inventory_code }}</strong></td>
+                                <td>{{ asset.name }}</td>
+                                <td>{{ asset.category.name }}</td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-25 text-dark">{{ asset.get_status_display }}</span>
+                                </td>
+                                <td>{{ asset.location.name|default:"—" }}</td>
+                                <td>{{ asset.assigned_to.get_display_name|default:"—" }}</td>
+                                <td class="text-secondary text-end small">{{ asset.updated_at|date:"d.m.Y" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center text-secondary py-4">Список оборудования пуст.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section data-aos="fade-up" data-aos-delay="200">
+        <div class="surface-panel p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <h3 class="fw-semibold text-dark mb-3">Ближайшее обслуживание</h3>
+                    <div class="d-flex flex-column gap-3">
+                        {% for record in upcoming_maintenance %}
+                            <div class="maintenance-card p-3">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong>{{ record.title }}</strong>
+                                    <span class="badge bg-dark text-light">{{ record.get_status_display }}</span>
+                                </div>
+                                <div class="text-secondary small mb-1">{{ record.asset.name }} — {{ record.asset.inventory_code }}</div>
+                                <div class="d-flex justify-content-between text-secondary small">
+                                    <span>Назначено: {{ record.responsible.get_display_name|default:"—" }}</span>
+                                    <span>Дата: {{ record.scheduled_for|date:"d.m.Y"|default:"—" }}</span>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="text-secondary small">Нет запланированных работ.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h3 class="fw-semibold text-dark mb-3">Зоны внимания</h3>
+                    <div class="d-flex flex-column gap-3">
+                        {% for asset in low_stock_assets %}
+                            <div class="maintenance-card p-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>{{ asset.name }}</strong>
+                                    <span class="badge bg-warning text-dark">{{ asset.get_status_display }}</span>
+                                </div>
+                                <div class="text-secondary small">{{ asset.location.name|default:"Локация не указана" }}</div>
+                                <div class="text-secondary small">Ответственный: {{ asset.custodian.get_display_name|default:"—" }}</div>
+                            </div>
+                        {% empty %}
+                            <div class="text-secondary small">Все позиции в норме.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .category-item,
+    .maintenance-card {
+        border-radius: 1.15rem;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+    }
+</style>
+{% endblock %}
