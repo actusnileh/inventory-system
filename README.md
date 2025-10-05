@@ -29,7 +29,7 @@ git clone https://github.com/actusnileh/inventory-system.git && cd inventory-sys
 ```plaintext
 DJANGO_SECRET_KEY=       # Секретный ключ Django (обязательно заменить на свой)
 DEBUG=True               # Режим отладки (True — для разработки)
-POSTGRES_DB=pgdb.        # Имя базы данных
+POSTGRES_DB=pgdb        # Имя базы данных
 POSTGRES_USER=user       # Пользователь базы данных
 POSTGRES_PASSWORD=       # Пароль пользователя
 POSTGRES_HOST=postgres   # Хост базы данных (по умолчанию — postgres, как сервис в Docker)

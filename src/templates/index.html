@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <!-- Заголовок -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold mb-3 text-primary">
+            <i class="bi bi-box-seam"></i> Система инвентаризации и задач
+        </h1>
+        <p class="lead text-muted">
+            Удобный способ управлять оборудованием и задачами сотрудников в одном месте.
+        </p>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="row g-4">
+
+        <!-- Карточка Инвентарь -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 text-center p-4">
+                <div class="icon mb-3" style="font-size: 3rem; color:#4f46e5;">
+                    <i class="bi bi-archive"></i>
+                </div>
+                <h5 class="card-title fw-bold">Инвентарь</h5>
+                <p class="text-muted small">Просматривайте и управляйте всеми предметами учёта.</p>
+                <a href="#" class="btn btn-outline-primary">Перейти</a>
+            </div>
+        </div>
+
+        <!-- Карточка Задачи -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 text-center p-4">
+                <div class="icon mb-3" style="font-size: 3rem; color:#10b981;">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <h5 class="card-title fw-bold">Задачи</h5>
+                <p class="text-muted small">Следите за процессом выполнения задач и поручений.</p>
+                <a href="#" class="btn btn-outline-success">Перейти</a>
+            </div>
+        </div>
+
+        {% if user.is_admin %}
+        <!-- Карточка Администрирование -->
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 text-center p-4">
+                <div class="icon mb-3" style="font-size: 3rem; color:#facc15;">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+                <h5 class="card-title fw-bold">Администрирование</h5>
+                <p class="text-muted small">Добавляйте пользователей, оборудование и задачи.</p>
+                <a href="#" class="btn btn-outline-warning">Перейти</a>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% else %}
+    <!-- Для гостей -->
+    <div class="text-center py-5 bg-white rounded shadow-sm p-4">
+        <h3 class="fw-semibold mb-3">Добро пожаловать!</h3>
+        <p class="text-muted mb-4">
+            Чтобы начать работу с системой, войдите в свой аккаунт или зарегистрируйтесь.
+        </p>
+        <a href="#" class="btn btn-guest btn-login me-2">Войти</a>
+        <a href="#" class="btn btn-guest btn-register">Регистрация</a>
+    </div>
+    {% endif %}
+
+</div>
+
+<style>
+    /* Карточки */
+    .card .icon {
+        transition: transform 0.3s;
+    }
+
+    .card:hover .icon {
+        transform: scale(1.2);
+    }
+
+    .card .btn {
+        transition: all 0.3s;
+    }
+
+    .card .btn:hover {
+        transform: translateY(-2px);
+    }
+</style>
+
+{% endblock %}
