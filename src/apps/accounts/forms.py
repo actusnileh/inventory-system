@@ -114,7 +114,7 @@ class TeamMemberUpdateForm(forms.ModelForm):
             "department",
             "job_title",
             "phone",
-            "timezone",
+            "user_timezone",
             "is_active",
         )
         widgets = {
@@ -125,7 +125,7 @@ class TeamMemberUpdateForm(forms.ModelForm):
             {
                 "role": forms.Select(attrs={"class": "form-select form-select-lg"}),
                 "department": forms.Select(attrs={"class": "form-select form-select-lg"}),
-                "timezone": forms.TextInput(attrs={"class": "form-control form-control-lg"}),
+                "user_timezone": forms.TextInput(attrs={"class": "form-control form-control-lg"}),
                 "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
             }
         )
@@ -166,7 +166,7 @@ class ProfileForm(forms.ModelForm):
             "department",
             "job_title",
             "phone",
-            "timezone",
+            "user_timezone",
             "bio",
         )
         widgets = {

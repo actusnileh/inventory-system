@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                 ('role', models.CharField(choices=[('admin', 'Администратор'), ('user', 'Пользователь')], default='user', max_length=20, verbose_name='Роль')),
                 ('job_title', models.CharField(blank=True, max_length=120, verbose_name='Должность')),
                 ('phone', models.CharField(blank=True, max_length=20, validators=[django.core.validators.RegexValidator('^[0-9\\-\\+\\(\\)\\s]+$', message='Используйте допустимый формат номера')], verbose_name='Телефон')),
-                ('timezone', models.CharField(default='Europe/Moscow', max_length=64, verbose_name='Часовой пояс')),
+                ('user_timezone', models.CharField(default='Europe/Moscow', max_length=64, verbose_name='Часовой пояс')),
                 ('avatar', models.ImageField(blank=True, null=True, upload_to='avatars/', verbose_name='Аватар')),
                 ('bio', models.TextField(blank=True, verbose_name='О себе')),
                 ('last_activity', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Последняя активность')),
