@@ -6,17 +6,22 @@
 <div class="py-5">
     <section class="mb-5" data-aos="fade-up">
         <div class="surface-panel p-4 p-lg-5">
-            <div class="row g-4 align-items-center">
-                <div class="col-lg-7">
+            <div class="app-toolbar mb-4">
+                <div>
                     <div class="badge-soft mb-3">
                         <span class="pulse-dot"></span>
                         Команда и роли
                     </div>
-                    <h1 class="fw-bold text-dark mb-3">Вся команда в одном месте</h1>
-                    <p class="text-secondary mb-4">
-                        Следите за активностью сотрудников, структурой отделов и загрузкой. Страница обновляется автоматически,
-                        чтобы у вас был быстрый доступ к ключевой информации.
-                    </p>
+                    <h1 class="fw-bold text-dark mb-2">Вся команда в одном месте</h1>
+                    <p class="text-secondary mb-0">Следите за активностью сотрудников, структурой отделов и загрузкой — все данные обновляются мгновенно.</p>
+                </div>
+                <div class="toolbar-actions">
+                    <a href="{% url 'accounts:team_create' %}" class="btn btn-primary"><i class="bi bi-person-plus me-2"></i>Новый сотрудник</a>
+                    <a href="{% url 'accounts:department_create' %}" class="btn btn-outline-dark"><i class="bi bi-diagram-3 me-2"></i>Создать отдел</a>
+                </div>
+            </div>
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-7">
                     <div class="row g-3">
                         <div class="col-sm-4">
                             <div class="stat-card glassy-card text-center p-3">
@@ -44,7 +49,7 @@
                         <ul class="list-unstyled d-flex flex-column gap-2 mb-0">
                             {% for item in role_distribution %}
                                 <li class="d-flex justify-content-between align-items-center">
-                                    <span class="text-light text-opacity-80">{{ item.role|default:"—"|title }}</span>
+                                    <span class="text-light text-opacity-80 text-capitalize">{{ item.role|default:"—" }}</span>
                                     <span class="badge bg-primary bg-opacity-25 text-light">{{ item.total }}</span>
                                 </li>
                             {% empty %}
@@ -59,18 +64,21 @@
 
     <section class="mb-5" data-aos="fade-up" data-aos-delay="100">
         <div class="surface-panel p-4 p-lg-5">
-            <div class="d-flex flex-column flex-lg-row align-items-lg-end justify-content-between gap-3 mb-4">
-                <div>
+            <div class="row g-3 align-items-center mb-4">
+                <div class="col-lg-8">
                     <h2 class="fw-bold text-dark mb-1">Отделы и команды</h2>
-                    <p class="text-secondary mb-0">Структура компании с закреплёнными сотрудниками.</p>
+                    <p class="text-secondary mb-0">Структура компании с закреплёнными сотрудниками. Используйте поиск, чтобы быстро найти команду.</p>
                 </div>
-                <a href="{% url 'accounts:department_create' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>Добавить отдел
-                </a>
+                <div class="col-lg-4">
+                    <div class="form-search">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" class="form-control form-control-lg" id="department-filter" placeholder="Поиск отдела..." autocomplete="off">
+                    </div>
+                </div>
             </div>
             <div class="row g-4">
                 {% for department in departments %}
-                    <div class="col-md-6 col-xl-4">
+                    <div class="col-md-6 col-xl-4 department-card-wrapper" data-department="{{ department.name|lower }}">
                         <div class="department-card h-100 p-4" style="border-top:4px solid {{ department.color }}">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <h5 class="fw-semibold mb-0">{{ department.name }}</h5>
@@ -105,11 +113,23 @@
 
     <section data-aos="fade-up" data-aos-delay="150">
         <div class="surface-panel p-4 p-lg-5">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold text-dark mb-0">Недавние сотрудники</h2>
-                <a href="{% url 'accounts:team_create' %}" class="btn btn-outline-dark">
-                    <i class="bi bi-person-plus me-2"></i>Создать пользователя
-                </a>
+            <div class="app-toolbar mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Недавние сотрудники</h2>
+                    <p class="text-secondary mb-0">Живой список последних пользователей и их активность.</p>
+                </div>
+                <div class="toolbar-actions">
+                    <div class="form-search">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="search" class="form-control form-control-lg" id="team-global-search" placeholder="Поиск пользователей..." autocomplete="off">
+                    </div>
+                    <div class="d-flex gap-1">
+                        <button type="button" class="filter-chip active" data-role-filter="all">Все</button>
+                        <button type="button" class="filter-chip" data-role-filter="admin">Админы</button>
+                        <button type="button" class="filter-chip" data-role-filter="user">Пользователи</button>
+                    </div>
+                    <a href="{% url 'accounts:team_create' %}" class="btn btn-outline-dark"><i class="bi bi-person-plus me-2"></i>Создать</a>
+                </div>
             </div>
             <div class="table-responsive">
                 <table class="table align-middle table-hover">
@@ -125,7 +145,7 @@
                     </thead>
                     <tbody>
                         {% for user in recent_users %}
-                            <tr>
+                            <tr class="team-row" data-role="{{ user.role }}" data-name="{{ user.get_display_name|lower }} {{ user.department.name|default:''|lower }} {{ user.job_title|default:''|lower }}">
                                 <td>
                                     <strong>{{ user.get_display_name }}</strong>
                                     <div class="text-secondary small">{{ user.job_title|default:"—" }}</div>
@@ -170,4 +190,43 @@
         border: 1px solid rgba(255, 255, 255, 0.15);
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const userSearch = document.getElementById('team-global-search');
+        const userRows = document.querySelectorAll('.team-row');
+        const roleChips = document.querySelectorAll('[data-role-filter]');
+        const departmentFilter = document.getElementById('department-filter');
+        const departmentCards = document.querySelectorAll('.department-card-wrapper');
+
+        function filterUsers() {
+            const query = (userSearch?.value || '').trim().toLowerCase();
+            const activeRole = document.querySelector('.filter-chip.active')?.dataset.roleFilter || 'all';
+
+            userRows.forEach(row => {
+                const matchesRole = activeRole === 'all' || row.dataset.role === activeRole;
+                const matchesSearch = !query || row.dataset.name.includes(query);
+                row.style.display = matchesRole && matchesSearch ? '' : 'none';
+            });
+        }
+
+        userSearch?.addEventListener('input', filterUsers);
+        roleChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                roleChips.forEach(el => el.classList.remove('active'));
+                chip.classList.add('active');
+                filterUsers();
+            });
+        });
+
+        departmentFilter?.addEventListener('input', () => {
+            const query = departmentFilter.value.trim().toLowerCase();
+            departmentCards.forEach(card => {
+                card.style.display = !query || card.dataset.department.includes(query) ? '' : 'none';
+            });
+        });
+
+        filterUsers();
+    });
+</script>
 {% endblock %}

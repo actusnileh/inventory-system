@@ -99,18 +99,26 @@
     <section class="mb-5" data-aos="fade-up" data-aos-delay="150">
         <div class="surface-panel p-4 p-lg-5">
             <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
-                <h2 class="fw-bold text-dark mb-0">Список оборудования</h2>
-                {% if can_manage %}
-                    <div class="d-flex gap-2">
+                <div>
+                    <h2 class="fw-bold text-dark mb-1">Список оборудования</h2>
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="d-flex gap-1" id="asset-status-filters">
+                        <button type="button" class="filter-chip active" data-status-filter="all">Все</button>
+                        {% for status, label in assets.model.Status.choices %}
+                            <button type="button" class="filter-chip" data-status-filter="{{ status }}">{{ label }}</button>
+                        {% endfor %}
+                    </div>
+                    {% if can_manage %}
                         <a href="{% url 'inventory:asset_create' %}" class="btn btn-primary">
                             <i class="bi bi-plus me-2"></i>Добавить позицию
                         </a>
                         <a href="{% url 'inventory:maintenance_create' %}" class="btn btn-outline-dark">Запланировать сервис</a>
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
             </div>
             <div class="table-responsive">
-                <table class="table align-middle table-hover">
+                <table class="table table-modern align-middle" id="asset-table">
                     <thead>
                         <tr class="text-secondary small text-uppercase">
                             <th class="border-0">Инвентарный номер</th>
@@ -124,7 +132,7 @@
                     </thead>
                     <tbody>
                         {% for asset in assets %}
-                            <tr>
+                            <tr data-status="{{ asset.status }}">
                                 <td><strong>{{ asset.inventory_code }}</strong></td>
                                 <td>{{ asset.name }}</td>
                                 <td>{{ asset.category.name }}</td>
@@ -210,4 +218,23 @@
         box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusButtons = document.querySelectorAll('[data-status-filter]');
+        const assetRows = document.querySelectorAll('#asset-table tbody tr');
+
+        statusButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                statusButtons.forEach(el => el.classList.remove('active'));
+                button.classList.add('active');
+                const status = button.dataset.statusFilter;
+                assetRows.forEach(row => {
+                    const matches = status === 'all' || row.dataset.status === status;
+                    row.style.display = matches ? '' : 'none';
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}
