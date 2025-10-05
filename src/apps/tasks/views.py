@@ -129,8 +129,13 @@ class TaskStatusUpdateView(LoginRequiredMixin, View):
         if task is None:
             return HttpResponseBadRequest("Task not found")
 
-        if not request.user.is_admin_role and request.user not in task.project.members.all():
-            return HttpResponseBadRequest("Forbidden")
+        if not request.user.is_admin_role:
+            is_project_member = task.project.members.filter(pk=request.user.pk).exists()
+            is_assignee = task.assignee_id == request.user.id
+            is_creator = task.created_by_id == request.user.id
+            is_watcher = task.watchers.filter(pk=request.user.pk).exists()
+            if not (is_project_member or is_assignee or is_creator or is_watcher):
+                return HttpResponseBadRequest("Forbidden")
 
         task.set_status(status, user=request.user)
         return JsonResponse({"status": task.get_status_display()})
